@@ -1,6 +1,6 @@
 (
     function(){
-        canvas=document.getElementById("canvas");
+        canvas=document.getElementsByTagName("canvas")[0];
         var context = canvas.getContext("2d");
     
 
@@ -8,11 +8,12 @@
         var car2=new Image();
 		var car3=new Image()
         var bg=new Image();
+        
 
         car.src="images/car1.png";
         car2.src="images/car3.png";
 		car3.src="images/car2.png"
-        bg.src="images/background.png"
+        bg.src="images/background.jpg"
 
 
         var jump=75;
@@ -76,9 +77,28 @@
 		function randomRange(x,y){
     return Math.floor(Math.random()*(y-x)+x);
 }
+        var yInt=0;
+        var yInt2=386;
         function draw(){
-           context.drawImage(bg,0,0)
-            context.drawImage(bg,0,225)
+            
+          
+            context.drawImage(bg,0,yInt++);
+            context.drawImage(bg,0,yInt-386);
+            
+            if(yInt==386){
+                console.log(yInt);
+                yInt=yInt-386;
+            }
+            context.drawImage(bg,0,yInt2++);
+            context.drawImage(bg,0,yInt-386);
+            
+            if(yInt2==386){
+                console.log(yInt2);
+                yInt2=yInt2-386;
+            }
+            
+            
+           
             context.drawImage(car,bx,by);  //110  190   265  340
 
 
@@ -88,17 +108,42 @@
           
             for(var i=0;i<enemy.length;i++)
             {
+                if(enemy[i]==null){
+                    continue;
+                }
+                if(enemy[i].y>772){
+                    enemy.splice(i,1);
+                }
+                
 				console.log(enemy);
 				var enemyCar;
 				console.log(enemy[i].carno);
+                
 				var lane=Math.floor(Math.random()*4)+0;
-						for(j=0;j<enemy.length;j++){
-							if(enemy[j].y===enemy[i].y && lane===enemy[j])
-							{
-								lane=Math.floor(Math.random()*4)+0;
-								j=0;
-							}
+                for(j=0;j<enemy.length;j++){
+                    if(enemy[i]==enemy[j]){
+                        continue;
+                    }
+				    if(enemy[j].y===enemy[i].y && lane===enemy[j])
+				    {
+                        lane=Math.floor(Math.random()*4)+0;
+				        j=0;
+				    }
+                    
+                    if(enemy[j].x==enemy[i].x && enemy[j].y+enemyHeight<=enemy[i].y){
+                        enemy.splice(j,1);
+                        j=0;
+                    }
+                    if(enemy[j].y>772){
+                    enemy.splice(j,1);
+                }
+                            
+                    
 						}
+                if(enemy[i]==null){
+                    continue;
+                }
+                
 					if(enemy[i].carno==1 || enemy[i].carno==5 || enemy[i].carno==3){
 						enemyCar=car3;
 					}
@@ -130,13 +175,24 @@
                       // }
                      
                     }
+                    if(enemy.length>=6){
+                        for(p=0;p<enemy.length;p++){
+                            if(enemy[p].y>700){
+                                enemy.splice(p,1);
+                            }
+                        }
+                    }
+                    if(enemy[i]==null){
+                    continue;
+                }
     
-                    if(enemy[i].y>=750)
+                    if(enemy[i].y>=772)
                     {
                       //  screenCount--;
                         enemy[i].dead=1;
-						
-
+                       
+						enemy.splice(i,1);
+                        
 						enemy.push({
                                 x:pos[lane],
                                 y:-200,
@@ -144,7 +200,9 @@
 								carno:randomRange(1,10),
 								velocity:randomRange(2,10)
                             })
-                    }
+                        
+                 }
+                    
                 } 
 				
 				
